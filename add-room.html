@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Mới Room - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #0066cc;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: #999;
+        }
+
+        /* Header */
+        .page-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #0066cc;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            font-size: 20px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        label .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Form Row */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Amenity Checkboxes */
+        .amenity-group {
+            margin-bottom: 25px;
+        }
+
+        .amenity-group-title {
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .amenity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        /* Image Upload */
+        .upload-area {
+            border: 2px dashed #0066cc;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-area:hover {
+            background-color: #f0f4ff;
+        }
+
+        .upload-area i {
+            font-size: 32px;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .upload-area .hint {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .image-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .preview-item .badge-primary {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #0066cc;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .preview-item .btn-remove {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .preview-item:hover .btn-remove {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #0066cc;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0052a3;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e8e8e8;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #0066cc;
+            border: 2px solid #0066cc;
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f4ff;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0066cc;
+        }
+
+        .info-box i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="#"><i class="fas fa-home"></i> Homestay</a>
+            <span><i class="fas fa-chevron-right"></i></span>
+            <a href="#">Paradise Villa Beach Resort</a>
+            <span><i class="fas fa-chevron-right"></i></span>
+            <span>Thêm Mới Room</span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-door-open"></i> Thêm Mới Room</h1>
+            <p>Paradise Villa Beach Resort</p>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <span>Khi lưu, bạn có thể tiếp tục thêm room khác hoặc quay lại homestay</span>
+        </div>
+
+        <!-- Form -->
+        <form id="addRoomForm">
+            <!-- 1. Thông tin Room -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-info-circle"></i>
+                    Thông tin Room
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Số phòng <span class="required">*</span></label>
+                        <input type="text" name="room_number" placeholder="Ví dụ: A101, B201" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Loại phòng <span class="required">*</span></label>
+                        <select name="room_type" required>
+                            <option value="">-- Chọn loại phòng --</option>
+                            <option value="single">Phòng đơn</option>
+                            <option value="double">Phòng đôi</option>
+                            <option value="suite">Suite</option>
+                            <option value="deluxe">Deluxe</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Giá/giờ (VNĐ) <span class="required">*</span></label>
+                        <input type="number" name="price_per_hour" placeholder="100000" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số khách tối đa <span class="required">*</span></label>
+                        <input type="number" name="max_guests" placeholder="2" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Diện tích (m²) <span class="required">*</span></label>
+                        <input type="number" name="area_m2" placeholder="30" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng phòng <span class="required">*</span></label>
+                        <input type="number" name="quantity_room" placeholder="5" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group form-row full">
+                    <label>Mô tả</label>
+                    <textarea name="description" placeholder="Nhập mô tả chi tiết về phòng..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <div class="toggle-switch">
+                        <label class="switch">
+                            <input type="checkbox" name="status" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>Hoạt động</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Tiện nghi Room -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-star"></i>
+                    Tiện nghi Room
+                </div>
+
+                <div class="amenity-group">
+                    <div class="amenity-group-title">Điều hòa & Thông gió</div>
+                    <div class="amenity-grid">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity1" name="amenities" value="ac">
+                            <label for="amenity1">Máy lạnh</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity2" name="amenities" value="fan">
+                            <label for="amenity2">Quạt</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="amenity-group">
+                    <div class="amenity-group-title">Giải trí</div>
+                    <div class="amenity-grid">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity3" name="amenities" value="tv">
+                            <label for="amenity3">TV</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity4" name="amenities" value="wifi">
+                            <label for="amenity4">WiFi miễn phí</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="amenity-group">
+                    <div class="amenity-group-title">Vệ sinh & Cá nhân hóa</div>
+                    <div class="amenity-grid">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity5" name="amenities" value="hot_water">
+                            <label for="amenity5">Nước nóng</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity6" name="amenities" value="hair_dryer">
+                            <label for="amenity6">Máy sấy tóc</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity7" name="amenities" value="bathroom">
+                            <label for="amenity7">Phòng tắm riêng</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="amenity-group">
+                    <div class="amenity-group-title">Tiện ích khác</div>
+                    <div class="amenity-grid">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity8" name="amenities" value="desk">
+                            <label for="amenity8">Bàn làm việc</label>
+                        </div>
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="amenity9" name="amenities" value="safe">
+                            <label for="amenity9">Két an toàn</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Hình ảnh Room -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-images"></i>
+                    Hình ảnh Room
+                </div>
+
+                <div class="form-group">
+                    <label>Tải lên ảnh <span class="required">*</span></label>
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Kéo thả ảnh hoặc nhấp để chọn</p>
+                        <p class="hint">Hỗ trợ: JPG, PNG, WebP (tối đa 5MB/ảnh)</p>
+                    </div>
+                    <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display: none;">
+                </div>
+
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button type="button" class="btn-outline" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> Quay lại Homestay
+                </button>
+                <button type="submit" class="btn-secondary">
+                    <i class="fas fa-plus"></i> Lưu & Thêm Room khác
+                </button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-check"></i> Lưu Room
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        fileInput.addEventListener('change', handleImageSelect);
+
+        function handleImageSelect(e) {
+            const files = Array.from(e.target.files);
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        ${index === 0 ? '<span class="badge-primary">Ảnh đại diện</span>' : ''}
+                        <button type="button" class="btn-remove" onclick="removeImage(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    imagePreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeImage(btn) {
+            btn.closest('.preview-item').remove();
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        document.getElementById('addRoomForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Lưu thành công!');
+        });
+    </script>
+</body>
+
+</html>
